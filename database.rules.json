@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "links": {
+      ".read": "auth != null && auth.token.email.toLowerCase() == 'cgn210@cgnmail.net'",
+      ".write": "auth != null && auth.token.email.toLowerCase() == 'cgn210@cgnmail.net'"
+    }
+  }
+}
