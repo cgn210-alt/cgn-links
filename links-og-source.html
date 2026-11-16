@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<!-- 카카오톡 등 링크 공유 썸네일(links-og.png) 원본. 1200x630 으로 캡처해서 PNG 로 저장 -->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:630px; overflow:hidden; }
+  body {
+    font-family:'Noto Sans KR', sans-serif;
+    position:relative;
+    background:
+      radial-gradient(900px 600px at 0% -10%, rgba(255,255,255,0.16), transparent 55%),
+      linear-gradient(135deg, #123f72 0%, #1a4f8a 50%, #1f63ad 100%);
+  }
+  .frame { position:absolute; inset:22px; border:2px solid rgba(255,255,255,0.30); border-radius:18px; }
+  .pill {
+    position:absolute; top:64px; left:68px;
+    font-size:18px; font-weight:700; letter-spacing:0.18em;
+    color:#123f72; background:#fff; padding:8px 20px; border-radius:30px;
+  }
+  .title { position:absolute; top:130px; left:66px; font-size:82px; font-weight:900; line-height:1.2; color:#fff; text-shadow:0 3px 14px rgba(0,0,0,0.18); }
+  .title .l2 { color:#ffb37a; text-shadow:none; }
+  .subtitle { position:absolute; top:356px; left:68px; font-size:27px; font-weight:700; color:#e3edf9; line-height:1.6; }
+  .footer-tag {
+    position:absolute; bottom:56px; left:68px;
+    font-size:19px; font-weight:700; color:#123f72;
+    background:rgba(255,255,255,0.92); padding:7px 18px; border-radius:24px;
+  }
+  .art { position:absolute; right:64px; bottom:78px; }
+</style>
+</head>
+<body>
+
+<div class="frame"></div>
+<div class="pill">CGN 경영관리실</div>
+<div class="title">
+  <div>경영관리실</div>
+  <div class="l2">업무링크</div>
+</div>
+<div class="subtitle">업무에 자주 쓰는 링크를 한 곳에서<br>어느 PC에서나 같은 목록으로</div>
+<div class="footer-tag">cgn210-alt.github.io/cgn-links</div>
+
+<!-- 링크 카드 묶음 + 사슬 아이콘 -->
+<svg class="art" width="440" height="430" viewBox="0 0 440 430" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="220" cy="410" rx="200" ry="14" fill="rgba(0,0,0,0.18)" />
+  <!-- 뒤 카드 -->
+  <rect x="70" y="40" width="300" height="340" rx="26" fill="#ffffff" opacity="0.35" transform="rotate(-8 220 210)" />
+  <!-- 앞 카드 -->
+  <rect x="60" y="50" width="320" height="350" rx="26" fill="#ffffff" />
+  <rect x="60" y="50" width="320" height="64" rx="26" fill="#eaf1fa" />
+  <rect x="60" y="88" width="320" height="26" fill="#eaf1fa" />
+  <rect x="92" y="72" width="8" height="22" rx="3" fill="#fe6b00" />
+  <rect x="112" y="74" width="140" height="18" rx="9" fill="#1a4f8a" />
+  <!-- 링크 줄 -->
+  <circle cx="102" cy="152" r="9" fill="#1a4f8a" /><rect x="124" y="143" width="190" height="18" rx="9" fill="#c9d8ea" />
+  <circle cx="102" cy="204" r="9" fill="#1a4f8a" /><rect x="124" y="195" width="150" height="18" rx="9" fill="#c9d8ea" />
+  <circle cx="102" cy="256" r="9" fill="#1a4f8a" /><rect x="124" y="247" width="210" height="18" rx="9" fill="#c9d8ea" />
+  <circle cx="102" cy="308" r="9" fill="#1a4f8a" /><rect x="124" y="299" width="130" height="18" rx="9" fill="#c9d8ea" />
+  <!-- 사슬(링크) 아이콘 배지 -->
+  <circle cx="352" cy="340" r="62" fill="#fe6b00" stroke="#ffffff" stroke-width="8" />
+  <g fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round">
+    <rect x="312" y="341" width="52" height="26" rx="13" transform="rotate(-45 338 354)" />
+    <rect x="340" y="313" width="52" height="26" rx="13" transform="rotate(-45 366 326)" />
+  </g>
+</svg>
+
+</body>
+</html>
