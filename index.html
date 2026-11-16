@@ -171,6 +171,53 @@
   .login .err{color:var(--danger);font-size:13px;margin-top:10px;min-height:18px}
 
   @media(max-width:520px){.brand{font-size:17px}.grid{grid-template-columns:1fr}}
+
+  /* 모바일 정리: 상단 축소, 칩 한 줄 가로 넘김, 카테고리 접기 */
+  .cardbox{scroll-margin-top:calc(var(--hdr,0px) + 12px)}
+  .chev{display:none}
+  @media(max-width:640px){
+    header{padding:12px 14px 12px}
+    .head-top{min-height:0}
+    .subtitle{display:none}
+    .search{margin-top:10px}
+    .search input{padding:11px 42px;font-size:16px;border-radius:12px}
+    .chips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;margin:10px -14px 0;padding:0 14px 2px;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .chips::-webkit-scrollbar{display:none}
+    .chip{flex:none;font-size:12.5px;padding:6px 12px}
+
+    main{padding:14px 12px 40px}
+    .contentbar{margin-bottom:12px}
+    .contentbar .pill{padding:6px 12px;font-size:12.5px}
+    .editbtn{padding:7px 12px;font-size:13px}
+    .toolbar{margin:0 0 12px}
+    .toolbar .hint{width:100%;margin:0 0 2px}
+    .fav{margin-bottom:18px}
+    .fav-grid{flex-wrap:nowrap;overflow-x:auto;margin:0 -12px;padding:2px 12px 6px;scrollbar-width:none}
+    .fav-grid::-webkit-scrollbar{display:none}
+    .fav-item,.fav-add{flex:none;padding:9px 14px}
+    .divider{margin:22px 0 14px}
+
+    .grid{gap:10px}
+    .cardbox{border-radius:14px;padding:0 14px}
+    .cardbox h2{margin:0;padding:14px 0;border-bottom:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .cardbox.open h2{border-bottom:1px solid var(--line);margin-bottom:4px}
+    .chev{display:inline-block;color:var(--sub);font-size:12px;transition:transform .15s;margin-left:2px}
+    .cardbox.open .chev{transform:rotate(180deg)}
+    .cardbox:not(.open) ul.links, .cardbox:not(.open) .addlink{display:none}
+    body.searching .cardbox ul.links{display:block}
+    body.searching .cardbox h2{border-bottom:1px solid var(--line);margin-bottom:4px}
+    body.searching .chev{display:none}
+    .cardbox.open ul.links, body.searching .cardbox ul.links{padding-bottom:6px}
+    ul.links li a{padding:12px 10px;font-size:15px}
+    body.editing .cardbox.open .addlink{display:block}
+
+    .login{margin:40px 16px}
+    .login input,.field input[type=text]{font-size:16px}
+    .overlay{align-items:flex-end;padding:0}
+    .dialog{max-width:none;border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+    .dialog-actions button{flex:1;padding:12px}
+  }
 </style>
 </head>
 <body class="locked">
@@ -236,6 +283,15 @@ firebase.initializeApp(FIREBASE_CONFIG);
 const DB_REF = firebase.database().ref("links");
 let DATA = {fav:[],work:[],personal:[]};
 
+// 모바일에서 펼쳐 둔 카테고리 (이 브라우저에만 저장)
+const OPEN_KEY="cgn-links-open";
+const OPEN=new Set((()=>{ try{ return JSON.parse(localStorage.getItem(OPEN_KEY))||[]; }catch(e){ return []; } })());
+function setOpen(card,on){
+  card.classList.toggle("open",on);
+  if(on) OPEN.add(card.dataset.sec); else OPEN.delete(card.dataset.sec);
+  try{ localStorage.setItem(OPEN_KEY,JSON.stringify([...OPEN])); }catch(e){}
+}
+
 // Firebase는 빈 배열을 저장하지 않으므로 읽어올 때 다시 채웁니다
 function normalize(d){
   d = d || {};
@@ -274,12 +330,13 @@ function cardHTML(group, sec, si){
       </span>
     </li>`;
   }).join("");
-  return `<div class="cardbox" data-sec="${esc(sec.title)}">
+  return `<div class="cardbox${OPEN.has(sec.title)?" open":""}" data-sec="${esc(sec.title)}">
     <h2>
       <span>${esc(sec.title)}</span>
       <button class="iconbtn edit-only" data-rencat="${group}:${si}" title="카테고리 이름 변경">✏️</button>
       <button class="iconbtn del edit-only" data-delcat="${group}:${si}" title="카테고리 삭제">🗑️</button>
       <span class="cnt">${sec.links.length}</span>
+      <span class="chev">▼</span>
     </h2>
     <ul class="links">${items}</ul>
     <button class="addlink" data-addlink="${group}:${si}">＋ 링크 추가</button>
@@ -310,7 +367,7 @@ function lastModifiedDate(){
 function renderDate(){ document.getElementById("footDate").textContent = fmtDate(lastModifiedDate()); }
 function renderAll(){
   renderFav(); renderGroup("work","workWrap"); renderGroup("personal","personalWrap");
-  renderChips(); renderStats(); renderDate();
+  renderChips(); renderStats(); renderDate(); if(window.setHdr) setHdr();
   if(!document.body.classList.contains("editing")) filter(document.getElementById("q").value);
 }
 
@@ -328,6 +385,7 @@ function filter(term){
     card.style.display=(editing||shown)?"":"none";
     visible+=shown;
   });
+  document.body.classList.toggle("searching",!!t);
   document.getElementById("empty").style.display=(editing||visible>0)?"none":"block";
   document.getElementById("favSec").style.display=t?"none":"";
   document.getElementById("personalDivider").style.display=t?"none":"flex";
@@ -444,6 +502,15 @@ document.getElementById("logoutBtn").addEventListener("click",()=>{
   if(confirm("로그아웃할까요? 다시 볼 때 비밀번호가 필요합니다.")) firebase.auth().signOut();
 });
 
+/* ── 모바일: 카테고리 접기/펼치기 (펼친 상태는 이 브라우저에만 기억) ── */
+document.addEventListener("click",e=>{
+  const h=e.target.closest(".cardbox h2"); if(!h||e.target.closest("button"))return;
+  const card=h.closest(".cardbox"); setOpen(card,!card.classList.contains("open"));
+});
+// 상단 고정 영역 높이 → 카테고리로 이동할 때 가려지지 않게
+function setHdr(){ document.documentElement.style.setProperty("--hdr",document.querySelector("header").offsetHeight+"px"); }
+window.addEventListener("resize",setHdr); setHdr();
+
 /* ── 검색 이벤트 ── */
 const q=document.getElementById("q");
 q.addEventListener("input",e=>filter(e.target.value));
@@ -452,7 +519,7 @@ document.getElementById("chips").addEventListener("click",e=>{
   const chip=e.target.closest(".chip"); if(!chip)return;
   q.value="";filter("");
   const card=document.querySelector(`.cardbox[data-sec="${chip.dataset.target}"]`);
-  if(card){card.scrollIntoView({behavior:"smooth",block:"start"});
+  if(card){setOpen(card,true); card.scrollIntoView({behavior:"smooth",block:"start"});
     card.style.transition="box-shadow .3s";card.style.boxShadow="0 0 0 3px var(--accent)";
     setTimeout(()=>card.style.boxShadow="",900);}
 });
