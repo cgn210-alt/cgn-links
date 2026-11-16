@@ -185,6 +185,8 @@
 
 <div class="login" id="login">
   <p>비밀번호를 입력해 주세요.</p>
+  <!-- 크롬 비밀번호 저장이 검색창을 아이디 칸으로 오인하지 않도록 숨은 아이디 칸을 둡니다 -->
+  <input type="text" autocomplete="username" value="cgn210@cgnmail.net" style="display:none" aria-hidden="true">
   <input type="password" id="pw" autocomplete="current-password">
   <button id="loginBtn">확인</button>
   <div class="err" id="loginErr"></div>
@@ -489,7 +491,7 @@ let listening=false;
 function onData(snap){ DATA=normalize(snap.val()); renderAll(); }
 firebase.auth().onAuthStateChanged(user=>{
   if(user){
-    document.body.classList.remove("locked"); pw.value="";
+    document.body.classList.remove("locked"); pw.value=""; q.value=""; filter("");
     if(!listening){ DB_REF.on("value",onData,()=>alert("자료를 불러오지 못했습니다. 다시 로그인해 주세요.")); listening=true; }
   }else{
     if(listening){ DB_REF.off("value",onData); listening=false; }
